@@ -28,6 +28,7 @@ def manifest():
 def service_worker():
     response = send_from_directory("static", "sw.js")
     response.headers["Service-Worker-Allowed"] = "/"
+    response.headers["Content-Type"] = "application/javascript"
     return response
 
 @app.route("/api/draft", methods=["POST"])
