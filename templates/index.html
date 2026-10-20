@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidhiAgent Pro AI</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #0b0f17; color: #e6edf3; padding: 16px; }
+        .header { text-align: center; margin-bottom: 16px; }
+        .header h1 { color: #58a6ff; font-size: 24px; font-weight: 800; }
+        .header p { color: #8b949e; font-size: 13px; margin-top: 3px; }
+        .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 14px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px; color: #f0f6fc; }
+        select, textarea { width: 100%; border-radius: 8px; border: 1px solid #30363d; font-size: 14px; padding: 11px; background-color: #0d1117; color: #fff; margin-bottom: 10px; outline: none; }
+        textarea { height: 100px; resize: none; }
+        .row { display: flex; gap: 8px; margin-bottom: 10px; }
+        .row select { margin-bottom: 0; }
+        .upload-box { border: 2px dashed #30363d; border-radius: 8px; padding: 10px; text-align: center; margin-bottom: 10px; background: #0d1117; cursor: pointer; }
+        .upload-box input { display: none; }
+        .upload-text { font-size: 12px; color: #8b949e; }
+        .btn-voice { width: 100%; background-color: #21262d; border: 1px solid #30363d; color: #f0f6fc; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+        .btn-voice.recording { background-color: #da3633; color: white; }
+        .btn-primary { width: 100%; background-color: #238636; color: #fff; font-weight: bold; font-size: 15px; border: none; padding: 13px; border-radius: 8px; cursor: pointer; }
+        .loader { display: none; text-align: center; margin: 14px 0; color: #58a6ff; font-weight: bold; font-size: 14px; }
+        .output-box { display: none; background-color: #161b22; border: 1px solid #30363d; border-radius: 14px; padding: 16px; margin-bottom: 30px; }
+        .output-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #30363d; padding-bottom: 8px; }
+        .output-title { font-weight: bold; color: #58a6ff; font-size: 15px; }
+        .action-btns { display: flex; gap: 6px; }
+        .btn-action { background-color: #21262d; border: 1px solid #30363d; color: #58a6ff; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .legal-content { font-family: "Georgia", serif; font-size: 14px; line-height: 1.7; color: #f0f6fc; background-color: #0d1117; padding: 14px; border-radius: 8px; border: 1px solid #30363d; word-wrap: break-word; }
+        .legal-content h3 { color: #58a6ff; margin: 12px 0 5px 0; font-size: 15px; }
+        .legal-content hr { border: 0; border-top: 1px solid #30363d; margin: 12px 0; }
+        .legal-content ul, .legal-content ol { padding-left: 18px; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>VidhiAgent Pro AI ⚖️</h1>
+        <p>Court-Ready BNS / BNSS Drafting & Cross-Examination</p>
+    </div>
+
+    <div class="card">
+        <div class="row">
+            <div style="flex: 2;">
+                <label>Legal Task / Service:</label>
+                <select id="draftType">
+                    <option value="Bail Application (BNS/BNSS)">Bail Petition (BNSS Sec 480/482)</option>
+                    <option value="Anticipatory Bail Application">Anticipatory Bail (BNSS Sec 484)</option>
+                    <option value="Cross-Examination Questions">Witness Cross-Examination Qs</option>
+                    <option value="FIR Analysis & Counter Grounds">FIR Legal Flaws & Counter Grounds</option>
+                    <option value="BNS to IPC Section Converter">BNS ↔ IPC Section Converter</option>
+                    <option value="Formal Legal Notice">Legal Notice (Cheque/Recovery)</option>
+                </select>
+            </div>
+            <div style="flex: 1;">
+                <label>Draft Bhasha:</label>
+                <select id="draftLang">
+                    <option value="English">English Court</option>
+                    <option value="Hindi">Hindi (जिला न्यायालय)</option>
+                </select>
+            </div>
+        </div>
+
+        <label>Camera Se FIR / Kagaz (Optional):</label>
+        <div class="upload-box" onclick="document.getElementById('docInput').click()">
+            <span class="upload-text">📸 Tap karke Photo lein ya Gallery se chunein</span>
+            <input type="file" id="docInput" accept="image/*" capture="environment" onchange="previewFile()">
+            <div id="filePreview" style="color:#58a6ff; font-size:12px; margin-top:4px;"></div>
+        </div>
+
+        <label>Case ke Facts / Vivad / Witness Statement:</label>
+        <textarea id="facts" placeholder="Case ki kahani ya witness ka bayaan yahan likhein..."></textarea>
+
+        <button id="micBtn" class="btn-voice" onclick="toggleSpeech()">🎙️ Bol Kar Likhein (Hindi/English)</button>
+        <button class="btn-primary" onclick="generateDraft()">AI Legal Action Run Karein</button>
+        <div id="loader" class="loader">⚖️ Drafting in Progress... Kripya 5 second wait karein...</div>
+    </div>
+
+    <div id="outputCard" class="output-box">
+        <div class="output-header">
+            <span class="output-title">VidhiAgent Output:</span>
+            <div class="action-btns">
+                <button class="btn-action" onclick="copyText()">📋 Copy</button>
+                <button class="btn-action" onclick="downloadDoc()">⬇️ Download</button>
+            </div>
+        </div>
+        <div id="outputContent" class="legal-content"></div>
+    </div>
+
+    <script>
+        let rawDraftText = "";
+        let recognition = null;
+        let isRecording = false;
+        let base64Image = null;
+
+        function previewFile() {
+            const file = document.getElementById('docInput').files[0];
+            if (file) {
+                document.getElementById('filePreview').innerText = "📎 Selected: " + file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) { base64Image = e.target.result.split(',')[1]; };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRec();
+            recognition.continuous = true;
+            recognition.interimResults = false;
+            recognition.lang = 'hi-IN';
+            recognition.onresult = (e) => {
+                let cur = e.resultIndex;
+                document.getElementById('facts').value += e.results[cur][0].transcript + " ";
+            };
+            recognition.onerror = () => { stopRecording(); };
+            recognition.onend = () => { stopRecording(); };
+        }
+
+        function toggleSpeech() {
+            if (!recognition) return alert("Browser mic support nahi karta. Gboard mic use karein.");
+            if (!isRecording) {
+                recognition.start();
+                isRecording = true;
+                document.getElementById('micBtn').classList.add('recording');
+                document.getElementById('micBtn').innerText = "🛑 Recording Chalu Hai... Rokne ke liye tap karein";
+            } else {
+                stopRecording();
+            }
+        }
+
+        function stopRecording() {
+            if (recognition && isRecording) recognition.stop();
+            isRecording = false;
+            document.getElementById('micBtn').classList.remove('recording');
+            document.getElementById('micBtn').innerText = "🎙️ Bol Kar Likhein (Hindi/English)";
+        }
+
+        async function generateDraft() {
+            stopRecording();
+            const draftType = document.getElementById('draftType').value;
+            const draftLang = document.getElementById('draftLang').value;
+            const facts = document.getElementById('facts').value.trim();
+            const loader = document.getElementById('loader');
+            const outputCard = document.getElementById('outputCard');
+            const outputContent = document.getElementById('outputContent');
+
+            if (!facts && !base64Image) {
+                return alert("Kripya case facts likhein ya photo upload karein!");
+            }
+
+            loader.style.display = "block";
+            outputCard.style.display = "none";
+
+            try {
+                const res = await fetch('/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ draft_type: draftType, lang: draftLang, facts: facts, image_data: base64Image })
+                });
+                const data = await res.json();
+                loader.style.display = "none";
+                outputCard.style.display = "block";
+                rawDraftText = data.result;
+                outputContent.innerHTML = marked.parse(rawDraftText);
+            } catch (err) {
+                loader.style.display = "none";
+                alert("Error: " + err);
+            }
+        }
+
+        function copyText() {
+            navigator.clipboard.writeText(rawDraftText).then(() => alert("Copied to clipboard!"));
+        }
+
+        function downloadDoc() {
+            const blob = new Blob([rawDraftText], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'VidhiAgent_Legal_Draft.doc';
+            a.click();
+        }
+    </script>
+</body>
+</html>
