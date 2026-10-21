@@ -1,3 +1,16 @@
+
+from datetime import date
+daily_usage = {}
+
+def check_ip_limit(ip):
+    today = str(date.today())
+    if ip not in daily_usage or daily_usage[ip]["date"] != today:
+        daily_usage[ip] = {"date": today, "count": 0}
+    if daily_usage[ip]["count"] >= 2:
+        return False
+    daily_usage[ip]["count"] += 1
+    return True
+
 from flask import Flask, render_template, request, jsonify
 import requests
 import time
