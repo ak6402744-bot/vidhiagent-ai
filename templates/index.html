@@ -38,6 +38,7 @@
         .legal-content hr { border: 0; border-top: 1px solid #30363d; margin: 12px 0; }
         .legal-content ul, .legal-content ol { padding-left: 18px; margin-bottom: 8px; }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -188,5 +189,25 @@
             a.click();
         }
     </script>
+
+<script>
+function copyDraft() {
+    const text = document.getElementById("resultArea") ? document.getElementById("resultArea").innerText : document.body.innerText;
+    navigator.clipboard.writeText(text).then(() => alert("Draft copied to clipboard!"));
+}
+
+function downloadPDF() {
+    const element = document.getElementById("resultArea") || document.querySelector(".draft-result") || document.body;
+    const opt = {
+        margin:       10,
+        filename:     "Court_Petition_Draft.pdf",
+        image:        { type: "jpeg", quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: "mm", format: "a4", orientation: "portrait" }
+    };
+    html2pdf().set(opt).from(element).save();
+}
+</script>
+
 </body>
 </html>
