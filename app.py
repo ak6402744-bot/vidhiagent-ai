@@ -33,17 +33,7 @@ def home():
 
 @app.route('/generate', methods=['POST'])
 def generate():
-    # PDF Handler
-    pdf_text = ""
-    if "file" in request.files:
-        f_up = request.files["file"]
-        if f_up and f_up.filename.lower().endswith(".pdf"):
-            try:
-                reader = pypdf.PdfReader(f_up)
-                for page in reader.pages:
-                    pdf_text += (page.extract_text() or "") + "\n"
-            except Exception as e:
-                print("PDF extract error:", e)
+
 
     user_ip = request.headers.get("X-Forwarded-For", request.remote_addr).split(",")[0].strip()
     if not check_ip_limit(user_ip):
@@ -76,7 +66,8 @@ Provide clear, professional output formatted in clean Markdown.
 
     parts = [{"text": prompt}]
     if image_data:
-        parts.append({"inline_data": {"mime_type": "image/jpeg", "data": image_data}})
+        mime = "application/pdf" if image_data.startswith("JVBERi0") else "image/jpeg"
+        parts.append({"inline_data": {"mime_type": mime, "data": image_data}})
 
     payload = {"contents": [{"parts": parts}]}
 
