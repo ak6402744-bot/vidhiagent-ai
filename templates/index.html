@@ -209,5 +209,41 @@ function downloadPDF() {
 }
 </script>
 
+
+<div id="proModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center; padding:20px; box-sizing:border-box;">
+    <div style="background:#151d2a; border:1px solid #d4af37; border-radius:12px; max-width:400px; width:100%; padding:24px; text-align:center; color:#fff;">
+        <h3 style="color:#d4af37; margin-top:0;">Daily Free Limit Reached (3/3)</h3>
+        <p style="font-size:14px; color:#cbd5e1;">Aapne aaj ke 3 free legal drafts poore kar liye hain. Unlimited Court Drafting & Cross-Examination ke liye Pro Plan upgrade karein.</p>
+        <div style="background:#0b0f17; border-radius:8px; padding:12px; margin:16px 0; border:1px dashed #d4af37;">
+            <div style="font-weight:bold; font-size:18px; color:#4ade80;">Pro Pass: ₹199 / Month</div>
+            <div style="font-size:12px; color:#94a3b8; margin-top:4px;">Direct UPI / Scanner Active</div>
+        </div>
+        <button onclick="alert("Payment gateway integration initiated!")" style="width:100%; padding:12px; background:#d4af37; color:#0b0f17; border:none; border-radius:8px; font-weight:bold; font-size:15px; cursor:pointer;">Upgrade to Pro Now</button>
+        <button onclick="document.getElementById("proModal").style.display="none"" style="margin-top:10px; background:none; border:none; color:#94a3b8; font-size:13px; cursor:pointer;">Close</button>
+    </div>
+</div>
+
+<footer style="text-align:center; margin-top:30px; padding:15px 0; font-size:12px; color:#64748b; border-top:1px solid #1e293b;">
+    VidhiAgent Pro AI • <a href="/privacy" style="color:#94a3b8; text-decoration:none;">Privacy Policy</a>
+</footer>
+
+
+<script>
+function checkUsageLimit() {
+    const today = new Date().toISOString().slice(0, 10);
+    const key = "vidhi_draft_count_" + today;
+    let count = parseInt(localStorage.getItem(key) || "0");
+    if (count >= 3) {
+        document.getElementById("proModal").style.display = "flex";
+        return false;
+    }
+    localStorage.setItem(key, (count + 1).toString());
+    return true;
+}
+
+// Hook into existing form/button
+const actionBtn = document.querySelector("button[onclick*="generate"]") || document.querySelector("form") || document.querySelector(".btn-run");
+</script>
+
 </body>
 </html>

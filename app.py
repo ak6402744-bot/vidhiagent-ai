@@ -77,6 +77,11 @@ def serve_sw():
     resp.headers["Service-Worker-Allowed"] = "/"
     return resp
 
+
+@app.route("/privacy")
+def privacy_policy():
+    return render_template("privacy.html")
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
