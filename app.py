@@ -34,6 +34,7 @@ Instructions based on service:
 2. If "Cross-Examination Questions": Formulate 15-20 sharp, destructive cross-examination questions to expose witness contradictions under BSA principles.
 3. If "FIR Analysis & Counter Grounds": Identify police procedural violations (BNSS 35, 105), factual contradictions, and list strong bail/discharge grounds.
 4. If "BNS to IPC Section Converter": Map every section between old IPC/CrPC and new BNS/BNSS with essential ingredients.
+5. If "RTI Application": Draft a formal, strict application under Section 6(1) of the Right to Information Act, 2005 addressed to the Public Information Officer (PIO). Frame sharp numbered information queries based on facts, include Section 6(3) transfer clause, and statutory fee compliance statement.
 
 Task: {draft_type}
 Client Input / Facts: {facts}
