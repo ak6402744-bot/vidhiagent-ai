@@ -34,8 +34,8 @@ def home():
 def generate():
     user_ip = request.headers.get("X-Forwarded-For", request.remote_addr).split(",")[0].strip()
     if not check_ip_limit(user_ip):
-        limit_msg = "⚠️ Daily Free Limit Reached (2/2 Drafts Used)!\n\nUnlimited Court AI Drafts ke liye Advocate Pro Pass (₹199/Month) lein.\n\nUPI ID: 8709825303@ybl\nScreenshot WhatsApp karein: 918709825303"
-        return limit_msg, 429
+        from flask import jsonify
+        return jsonify({"error": "LIMIT_REACHED", "message": "⚠️ Daily Free Limit Reached (2/2 Drafts Used)!\n\nUnlimited Court AI Drafts ke liye Advocate Pro Pass (₹199/Month) lein.\n\nUPI ID: 8709825303@ybl\nWhatsApp: 918709825303"}), 200
     data = request.json or {}
     draft_type = data.get('draft_type', '')
     lang = data.get('lang', 'English')

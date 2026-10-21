@@ -168,6 +168,22 @@
                     body: JSON.stringify({ draft_type: draftType, lang: draftLang, facts: facts, image_data: base64Image })
                 });
                 const data = await res.json();
+
+    if (data.error === "LIMIT_REACHED" || (data.message && data.message.includes("Daily Free Limit"))) {
+        var modal = document.getElementById("payModal");
+        if (modal) { modal.style.display = "flex"; }
+        alert(data.message || "Daily Free Limit Reached! Upgrade to Pro.");
+        return;
+    }
+
+
+    if (data.error === "LIMIT_REACHED" || (data.message && data.message.includes("Daily Free Limit"))) {
+        var modal = document.getElementById("payModal");
+        if (modal) { modal.style.display = "flex"; }
+        alert(data.message || "Daily Free Limit Reached! Upgrade to Pro.");
+        return;
+    }
+
                 loader.style.display = "none";
                 outputCard.style.display = "block";
                 rawDraftText = data.result;
