@@ -167,7 +167,16 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ draft_type: draftType, lang: draftLang, facts: facts, image_data: base64Image })
                 });
-                const data = await res.json();
+                
+        const data = await res.json();
+        if (data.status === "limit_reached") {
+            const loader = document.getElementById("loading") || document.querySelector(".loading");
+            if (loader) loader.style.display = "none";
+            const modal = document.getElementById("payModal");
+            if (modal) { modal.style.display = "flex"; }
+            return;
+        }
+
 
     if (data.error === "LIMIT_REACHED" || (data.message && data.message.includes("Daily Free Limit"))) {
         var modal = document.getElementById("payModal");
